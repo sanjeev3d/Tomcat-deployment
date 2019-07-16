@@ -34,8 +34,9 @@ podTemplate(label: label, containers: [
      			}
 			}
 			stage('Deploy Helm'){
-				try {
+				//try {
 					sh """
+					
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
 						kubectl apply -f ./infra_build/service-account.yaml
@@ -44,11 +45,11 @@ podTemplate(label: label, containers: [
 						helm init --service-account tiller --upgrade
 						helm install --name Tomcat tomcat-helmchart	
 						"""
-				}
-				catch( exc ) {
-     				error "Helm deployment failure"
-     				throw(exc)
-     			}
+				//}
+				//catch( exc ) {
+     			//	error "Helm deployment failure"
+     			//	throw(exc)
+     			//}
 				
 			}
 		}
