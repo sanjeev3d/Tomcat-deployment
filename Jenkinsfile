@@ -6,7 +6,6 @@ podTemplate(label: label, containers: [
   volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 ]) {
-	try{
 		node(label){
 			stage('Initialize workspace'){
 				deleteDir()
@@ -36,7 +35,7 @@ podTemplate(label: label, containers: [
 			stage('Deploy Helm'){
 				//try {
 					sh """
-					
+
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
 						kubectl apply -f ./infra_build/service-account.yaml
@@ -53,8 +52,5 @@ podTemplate(label: label, containers: [
 				
 			}
 		}
-	}catch( exc ) {
-     	error "Pipeline Failure"
-     	throw(exc)
-	}
+	
 }
