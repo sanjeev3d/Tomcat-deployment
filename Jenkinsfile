@@ -17,8 +17,9 @@ podTemplate(label: label, containers: [
 			stage('Infra Build'){
 				try {
 					container('terraform'){
-						withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETACCESSKEY')]){
+						withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 						sh """
+							export TF_VAR_gcloud_secret_access_key="${GCLOUDSECRETKEY}"
 							terraform init
 							terraform plan
 							terraform apply -auto-approve
@@ -34,13 +35,23 @@ podTemplate(label: label, containers: [
 			stage('Deploy Helm'){
 				try {
 					sh """
-						kubectl apply -f ./
-
-					
+						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
+						kubectl apply -f ./infra_build/service-account.yaml
+						kubectl apply -f ./infra_build/role-binding.yml
+						helm version
+						helm init --service-account tiller --upgrade
+						helm install --name Tomcat tomcat-helmchart	
+						"""
 				}
-				catch(Exception e) {
-					
-				}
+				catch( exc ) {
+     				error "Helm deployment failure"
+     				throw(exc)
+     			}
 				
 			}
 		}
+	}catch( exc ) {
+     	error "Pipeline Failure"
+     	throw(exc)
+	}
+}
