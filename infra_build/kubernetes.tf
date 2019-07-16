@@ -15,9 +15,7 @@ node_config {
           "https://www.googleapis.com/auth/logging.write",
           "https://www.googleapis.com/auth/monitoring",
           ]
-          labels {
-          this-is-for = "dev-cluster"
-          }
+          
           tags = ["dev", "work"]
-}
+          }
 }
