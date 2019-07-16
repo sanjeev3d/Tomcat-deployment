@@ -2,6 +2,8 @@ import hudson.Util;
 def label = "worker-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
   containerTemplate(name: 'terraform', image: 'hashicorp/terraform', command: 'cat', ttyEnabled: true),
+  containerTemplate(name: 'cloud-sdk', image: 'google/cloud-sdk', command: 'cat', ttyEnabled: true)
+  google/cloud-sdk
   ],
   volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
@@ -34,6 +36,7 @@ podTemplate(label: label, containers: [
 			}
 			stage('Deploy Helm'){
 				//try {
+					container('cloud-sdk'){
 					withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 					sh """
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
@@ -45,6 +48,7 @@ podTemplate(label: label, containers: [
 						helm install --name Tomcat tomcat-helmchart	
 						"""
 					}
+				}
 				//}
 				//catch( exc ) {
      			//	error "Helm deployment failure"
