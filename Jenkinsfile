@@ -35,6 +35,7 @@ podTemplate(label: label, containers: [
 			stage('Deploy Helm'){
 				//try {
 					sh """
+						export TF_VAR_gcloud_secret_access_key="${GCLOUDSECRETKEY}"
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
 						kubectl apply -f ./infra_build/service-account.yaml
