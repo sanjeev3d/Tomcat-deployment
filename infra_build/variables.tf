@@ -9,7 +9,7 @@ variable "admin_password" {
 	type = "string"
 	description = "password to authenticate kubernetes master"
 }
-variable "gcloud_secret_access_key"
+variable "gcloud_secret_access_key" { }
 
 
 //GCP Variable
