@@ -48,7 +48,7 @@ podTemplate(label: label, containers: [
 						"""
 						isReleaseExists = sh(script: "helm list -q | tr '\\n' ','", returnStdout: true)
 						if (isReleaseExists.contains("tomcat")) {
-							sh "helm upgrade tomcat-helmchart"
+							sh "helm upgrade tomcat tomcat-helmchart"
 						} else {
 							sh "helm install -n tomcat tomcat-helmchart"
 						}
