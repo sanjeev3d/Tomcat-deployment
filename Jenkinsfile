@@ -40,8 +40,6 @@ podTemplate(label: label, containers: [
 					sh """
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud config set project annular-beacon-238207
-						kubectl apply -f ./infra_build/service-account.yaml
-						kubectl apply -f ./infra_build/role-binding.yml
 						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
 						helm version
 						helm init --service-account tiller --upgrade
