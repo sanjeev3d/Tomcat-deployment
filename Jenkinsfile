@@ -21,7 +21,7 @@ podTemplate(label: label, containers: [
 						sh """
 							cd ./infra_build/
 							export TF_VAR_gcloud_secret_access_key="${GCLOUDSECRETKEY}"
-							terraform init 
+							terraform init -backend-config="credentials=${GCLOUDSECRETKEY}"
 							terraform plan
 							terraform apply -auto-approve
 							"""
