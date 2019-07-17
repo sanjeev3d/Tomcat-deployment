@@ -40,6 +40,8 @@ podTemplate(label: label, containers: [
 					sh """
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud config set project annular-beacon-238207
+						chmod 777 service-account.yaml
+						chmod 777 role-binding.yml
 						ls -ltr
 						kubectl apply -f service-account.yaml
 						kubectl apply -f role-binding.yml
