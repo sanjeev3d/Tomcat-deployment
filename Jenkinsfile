@@ -40,7 +40,7 @@ podTemplate(label: label, containers: [
 					sh """
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud config set project annular-beacon-238207
-						gcloud config set container/cluster tef-cluster
+						gcloud config set container/cluster t1-cluster
 						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
 						chmod 777 service-account.yaml
 						chmod 777 role-binding.yml
