@@ -7,6 +7,7 @@ podTemplate(label: label, containers: [
   volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 ]) {
+	try{
 		node(label){
 			stage('Initialize workspace'){
 				deleteDir()
@@ -29,12 +30,12 @@ podTemplate(label: label, containers: [
 					}
 				}
 				catch( exc ) {
-     				error "Terraform Failure"
+     				error "Infra Build Failure"
      				throw(exc)
      			}
 			}
 			stage('Deploy Helm'){
-				//try {
+				try {
 					container('gcloud-kubectl-helm'){
 					withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 					sh """
@@ -46,20 +47,40 @@ podTemplate(label: label, containers: [
 						kubectl apply -f role-binding.yml
 						helm init --service-account tiller --upgrade	
 						"""
-						isReleaseExists = sh(script: "helm list -q | tr '\\n' ','", returnStdout: true)
-						if (isReleaseExists.contains("tomcat")) {
+							isReleaseExists = sh(script: "helm list -q | tr '\\n' ','", returnStdout: true)
+							if (isReleaseExists.contains("tomcat")) {
 							sh "helm upgrade tomcat tomcat-helmchart"
-						} else {
+							} else {
 							sh "helm install -n tomcat tomcat-helmchart"
+							}
 						}
 					}
 				}
-				//}
-				//catch( exc ) {
-     			//	error "Helm deployment failure"
-     			//	throw(exc)
-     			//}
-				
+				catch(exc) {
+     				error "Helm deployment failure"
+     				throw(exc)
+     			} 
+			}
+		}
+		} finally {
+			userInput = input(id: "Please_select", message: "want to destroy last deployment", parameters: [[$class: "ChoiceParameterDefinition", choices: "Yes\nNo", name: "Env"]])
+			stage('Infra Destroy'){
+				try {
+					container('terraform'){
+						withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
+						sh """
+							cd ./infra_build/
+							export TF_VAR_gcloud_secret_access_key="${GCLOUDSECRETKEY}"
+							terraform init -backend-config="credentials=${GCLOUDSECRETKEY}"
+							terraform destroy -auto-approve
+							"""
+						}
+					}
+				}
+				catch( exc ) {
+     				error "Infra Destroy Failure"
+     				throw(exc)
+     			}
 			}
 		}
 	
