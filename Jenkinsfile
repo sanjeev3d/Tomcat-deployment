@@ -45,7 +45,7 @@ podTemplate(label: label, containers: [
 						kubectl apply -f service-account.yaml
 						kubectl apply -f role-binding.yml
 						helm init --service-account tiller --upgrade
-						helm install --name Tomcat tomcat-helmchart	
+						helm install --name tomcat tomcat-helmchart	
 						"""
 					}
 				}
