@@ -44,9 +44,14 @@ podTemplate(label: label, containers: [
 						gcloud container clusters get-credentials t1-cluster --zone=asia-south1-c
 						kubectl apply -f service-account.yaml
 						kubectl apply -f role-binding.yml
-						helm init --service-account tiller --upgrade
-						helm install tomcat-helmchart	
+						helm init --service-account tiller --upgrade	
 						"""
+						isReleaseExists = sh(script: "helm list -q | tr '\\n' ','", returnStdout: true)
+						if (isReleaseExists.contains("tomcat")) {
+							sh "helm upgrade tomcat-helmchart"
+						} else {
+							sh "helm install -n tomcat tomcat-helmchart"
+						}
 					}
 				}
 				//}
