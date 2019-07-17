@@ -2,7 +2,7 @@ import hudson.Util;
 def label = "worker-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
   containerTemplate(name: 'terraform', image: 'hashicorp/terraform', command: 'cat', ttyEnabled: true),
-  containerTemplate(name: 'terraform-helm', image: 'richardalberto/terraform-helm', command: 'cat', ttyEnabled: true)
+  containerTemplate(name: 'gcloud-kubectl-helm', image: 'kiwigrid/gcloud-kubectl-helm', command: 'cat', ttyEnabled: true)
   ],
   volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
@@ -35,7 +35,7 @@ podTemplate(label: label, containers: [
 			}
 			stage('Deploy Helm'){
 				//try {
-					container('terraform-helm'){
+					container('gcloud-kubectl-helm'){
 					withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 					sh """
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
