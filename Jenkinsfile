@@ -64,7 +64,7 @@ podTemplate(label: label, containers: [
 		}
 		} finally {
 			userInput = input(id: "Please_select", message: "want to destroy last deployment", parameters: [[$class: "ChoiceParameterDefinition", choices: "Yes\nNo", name: "Env"]])
-			if (userInput = "Yes") {
+			if (userInput == "Yes") {
 				stage('Infra Destroy'){
 					try {
 						container('terraform'){
