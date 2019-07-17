@@ -2,7 +2,7 @@ import hudson.Util;
 def label = "worker-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
   containerTemplate(name: 'terraform', image: 'hashicorp/terraform', command: 'cat', ttyEnabled: true),
-  containerTemplate(name: 'gcloud-kubectl-helm', image: 'kiwigrid/gcloud-kubectl-helm', command: 'cat', ttyEnabled: true)
+  containerTemplate(name: 'gcloud-kubectl-helm', image: 'devth/helm', command: 'cat', ttyEnabled: true)
   ],
   volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
