@@ -38,7 +38,6 @@ podTemplate(label: label, containers: [
 					container('gcloud-kubectl-helm'){
 					withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 					sh """
-						gcloud auth revoke 348716258271-compute@developer.gserviceaccount.com
 						gcloud auth activate-service-account 348716258271-compute@developer.gserviceaccount.com --key-file ${GCLOUDSECRETKEY}
 						gcloud config set project annular-beacon-238207
 						gcloud config set container/cluster t1-cluster
