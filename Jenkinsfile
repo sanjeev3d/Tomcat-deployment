@@ -66,7 +66,7 @@ podTemplate(label: label, containers: [
 			userInput = input(id: "Please_select", message: "want to destroy last deployment", parameters: [[$class: "ChoiceParameterDefinition", choices: "Yes\nNo", name: "Env"]])
 			if (userInput == "Yes") {
 				stage('Infra Destroy'){
-					try {
+					//try {
 						container('terraform'){
 							withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 							sh """
@@ -77,11 +77,11 @@ podTemplate(label: label, containers: [
 								"""
 							}
 						}
-					}
-					catch( exc ) {
-     					error "Infra Destroy Failure"
-     				throw(exc)
-     				}
+					//}
+					//catch( exc ) {
+     				//	error "Infra Destroy Failure"
+     				//throw(exc)
+     				//}
 				}
 			}
 		}
