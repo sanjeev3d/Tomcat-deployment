@@ -42,10 +42,10 @@ podTemplate(label: label, containers: [
 						gcloud config set project annular-beacon-238207
 						chmod 777 service-account.yaml
 						chmod 777 role-binding.yml
+						helm init --service-account tiller --upgrade
 						ls -ltr
 						kubectl apply -f service-account.yaml
 						kubectl apply -f role-binding.yml
-						helm init --service-account tiller --upgrade
 						helm version
 						helm install --name Tomcat tomcat-helmchart	
 						"""
