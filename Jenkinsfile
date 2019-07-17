@@ -64,24 +64,25 @@ podTemplate(label: label, containers: [
 		}
 		} finally {
 			userInput = input(id: "Please_select", message: "want to destroy last deployment", parameters: [[$class: "ChoiceParameterDefinition", choices: "Yes\nNo", name: "Env"]])
-			stage('Infra Destroy'){
-				try {
-					container('terraform'){
-						withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
-						sh """
-							cd ./infra_build/
-							export TF_VAR_gcloud_secret_access_key="${GCLOUDSECRETKEY}"
-							terraform init -backend-config="credentials=${GCLOUDSECRETKEY}"
-							terraform destroy -auto-approve
-							"""
+			if (userInput = "Yes") {
+				stage('Infra Destroy'){
+					try {
+						container('terraform'){
+							withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
+							sh """
+								cd ./infra_build/
+								export TF_VAR_gcloud_secret_access_key="${GCLOUDSECRETKEY}"
+								terraform init -backend-config="credentials=${GCLOUDSECRETKEY}"
+								terraform destroy -auto-approve
+								"""
+							}
 						}
 					}
-				}
-				catch( exc ) {
-     				error "Infra Destroy Failure"
+					catch( exc ) {
+     					error "Infra Destroy Failure"
      				throw(exc)
-     			}
+     				}
+				}
 			}
 		}
-	
-}
+	}
