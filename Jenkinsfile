@@ -7,8 +7,8 @@ podTemplate(label: label, containers: [
   volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 ]) {
-	try{
 		node(label){
+			try{
 			stage('Initialize workspace'){
 				deleteDir()
 			}
@@ -16,7 +16,6 @@ podTemplate(label: label, containers: [
 			gitCommit = gitrepo.GIT_COMMIT
 			gitBranch = gitrepo.GIT_BRANCH
 			stage('Infra Build'){
-				try {
 					container('terraform'){
 						withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 						sh """
@@ -29,13 +28,7 @@ podTemplate(label: label, containers: [
 						}
 					}
 				}
-				catch( exc ) {
-     				error "Infra Build Failure"
-     				throw(exc)
-     			}
-			}
 			stage('Deploy Helm'){
-				try {
 					container('gcloud-kubectl-helm'){
 					withCredentials([file(credentialsId: 'gcloud-credential', variable: 'GCLOUDSECRETKEY')]){
 					sh """
@@ -56,13 +49,9 @@ podTemplate(label: label, containers: [
 						}
 					}
 				}
-				catch(exc) {
-     				error "Helm deployment failure"
-     				throw(exc)
-     			} 
-			}
-		}
-		} finally {
+			} catch(exc) {
+				error "Deployment Filed"
+			} finally {
 			userInput = input(id: "Please_select", message: "want to destroy last deployment", parameters: [[$class: "ChoiceParameterDefinition", choices: "Yes\nNo", name: "Env"]])
 			if (userInput == "Yes") {
 				stage('Infra Destroy'){
