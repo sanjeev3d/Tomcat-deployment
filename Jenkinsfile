@@ -40,6 +40,7 @@ podTemplate(label: label, containers: [
 					sh """
 						gcloud auth activate-service-account --key-file ${GCLOUDSECRETKEY}
 						gcloud config set project annular-beacon-238207
+						ls -ltr
 						helm version
 						helm init --service-account tiller --upgrade
 						helm install --name Tomcat tomcat-helmchart	
